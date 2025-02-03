@@ -1,0 +1,21 @@
+const express = require("express");
+const router = express.Router();
+const newUserModel = require('../../models/userModel');
+
+// DELETE user by ID
+router.delete('/delete/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;  // Get user ID from URL parameter
+    const user = await newUserModel.deleteOne({ _id: userId });
+
+    if (!user.deletedCount) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+module.exports = router;
