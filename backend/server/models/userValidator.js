@@ -1,7 +1,7 @@
 const z = require('zod')
 
 //validates when new user creates an account
-const newUserValidation = data => { 
+const userValidation = data => { 
   const registerValidationSchema = z.object({
     username : z.string().min(6, 'Username must be 6 characters or more'),
     email: z.string().email('Please Input a valid email'),
@@ -12,7 +12,7 @@ const newUserValidation = data => {
 };
 
 //validate user request when logging in
-const userLoginValidation = data => {
+const loginValidation = data => {
   const loginValidationSchema = z.object({
     username : z.string().min(6, 'Username must be 6 characters or more'),
     password: z.string().min(8, 'Password must be 8 or more characters').trim(),
@@ -20,8 +20,5 @@ const userLoginValidation = data => {
   return loginValidationSchema.safeParse(data)
 };
 
-
-
-
-module.exports.newUserValidation = newUserValidation;
-module.exports.userLoginValidation = userLoginValidation;
+module.exports.userValidation = userValidation;
+module.exports.loginValidation = loginValidation;

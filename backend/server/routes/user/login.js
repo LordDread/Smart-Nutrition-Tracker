@@ -1,22 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const z = require('zod')
-const { userLoginValidation } = require('../../models/userValidator')
-const newUserModel = require('../../models/userModel')
+const { loginValidation } = require('../../models/userValidator')
+const userModel = require('../../models/userModel')
 const bcrypt = require('bcrypt')
 const { generateAccessToken } = require('../../utilities/generateToken')
 
 
 router.post('/login', async (req, res) => {
 
-  const { error } = userLoginValidation(req.body);
-  if (error) return res.status(400).send({ message: error.errors[0].message });
+  const validationResult = loginValidation(req.body);
+  if (!validationResult.success) {
+    return res.status(400).send({ message: validationResult.error.errors[0].message });
+  }
 
   const { username, password } = req.body
 
   let user;
   try {
-    user = await newUserModel.findOne({ username: username });
+    user = await userModel.findOne({ username: username });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ message: "Internal server error" });
@@ -40,7 +42,7 @@ router.post('/login', async (req, res) => {
       .send({ message: "Invalid credentials, please try again" });
 
   //create json web token if authenticated and send it back to client in header where it is stored in localStorage ( might not be best practice )
-  const accessToken = generateAccessToken(user._id, user.email, user.username, user.password)
+  const accessToken = generateAccessToken(user._id, user.email, user.username)
 
   res.header('Authorization', accessToken).send({ accessToken: accessToken })
 })

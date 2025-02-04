@@ -2,18 +2,21 @@ const express = require("express");
 const router = express.Router();
 const z = require('zod')
 const bcrypt = require("bcrypt");
-const { newUserValidation } = require('../../models/userValidator')
-const newUserModel = require('../../models/userModel')
+const { userValidation } = require('../../models/userValidator')
+const userModel = require('../../models/userModel')
 
 router.post('/signup', async (req, res) => {
-    const { error } = newUserValidation(req.body);
-    console.log(error)
-    if (error) return res.status(400).send({ message: error.errors[0].message });
-
+    const { error } = userValidation(req.body);
+    if (error) {
+        console.log(error);  // Log the entire error object
+        return res.status(400).send({ message: error.errors[0].message });
+    } else {
+        console.log('Validation passed!');  // Log success when validation passes
+    }
     const { username, email, password } = req.body
 
     //check if email already exists
-    const user = await newUserModel.findOne({ username: username })
+    const user = await userModel.findOne({ username: username })
     if (user)
         return res.status(409).send({ message: "Username is taken, pick another" })
 
@@ -21,7 +24,7 @@ router.post('/signup', async (req, res) => {
     const hashPassword = await bcrypt.hash(password, 10)
 
     //creates a new user
-    const createUser = new newUserModel({
+    const createUser = new userModel({
         username: username,
         email: email,
         password: hashPassword,
