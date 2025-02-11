@@ -4,7 +4,7 @@ const User = require('../../models/userModel'); // Import the User model (update
 const router = express.Router();
 
 // Route to add a meal to a user
-router.post('/user/:userId/meal', async (req, res) => {
+router.post('/:userId/meal', async (req, res) => {
   const { userId } = req.params; // Get userId from the URL parameter
   const { mealName, date, calories, description } = req.body;
 

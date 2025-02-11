@@ -13,6 +13,10 @@ const getUserByIdRoute = require('./routes/user/getById');
 const editUserRoute = require('./routes/user/edit');
 const deleteUserByIDRoute = require('./routes/user/deleteByID');
 //meal logging routes
+const deleteMealRoute = require('./routes/meal/delete');
+const editMealRoute = require('./routes/meal/edit');
+const getAllMealRoute = require('./routes/meal/getAllById');
+const getMealRoute = require('./routes/meal/getById');
 const logMealRoute = require('./routes/meal/logMeal');
 
 
@@ -31,7 +35,11 @@ app.use('/user', getAllUsersRoute);
 app.use('/user', getUserByIdRoute);
 app.use('/user', editUserRoute);
 app.use('/user', deleteUserByIDRoute);
-app.use('/meal', logMealRoute)
+app.use('/user', deleteMealRoute)
+app.use('/user', editMealRoute)
+app.use('/user', getAllMealRoute)
+app.use('/user', getMealRoute)
+app.use('/user', logMealRoute)
 
 console.log(`The node environment is: ${process.env.NODE_ENV}`);
 

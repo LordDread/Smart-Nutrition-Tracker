@@ -19,6 +19,6 @@ const mealSchema = new Schema({
     type: String,
     default: '',
   } 
-}, { _id: false });
+}, { _id: true });
 
 module.exports = mealSchema;
