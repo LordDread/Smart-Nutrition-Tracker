@@ -7,7 +7,7 @@ import './RegisterModal.css';
 const url = `${process.env.REACT_APP_BACKEND_SERVER_URI}/user/signup`;
 
 const RegisterModal = ({ show, onHide }) => {
-  const [data, setData] = useState({ username: "", email: "", password: "" });
+  const [data, setData] = useState({ username: "", email: "", password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -17,8 +17,16 @@ const RegisterModal = ({ show, onHide }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (data.password !== data.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
     try {
-      const { data: res } = await axios.post(url, data);
+      const { data: res } = await axios.post(url, {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      });
       localStorage.setItem('token', res.token); 
       
       onHide();
@@ -81,6 +89,18 @@ const RegisterModal = ({ show, onHide }) => {
               value={data.password}
               onChange={handleChange}
               placeholder="Password"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="confirmPassword" style={{ fontWeight: "bold", textDecoration: "none" }}>Confirm Password:</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={data.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm Password"
               required
             />
           </div>

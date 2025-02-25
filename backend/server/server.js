@@ -12,6 +12,7 @@ const getAllUsersRoute = require('./routes/user/getAll');
 const getUserByIdRoute = require('./routes/user/getById');
 const editUserRoute = require('./routes/user/edit');
 const deleteUserByIDRoute = require('./routes/user/deleteByID');
+const verifyPassword = require('./routes/user/verifyPassword');
 //meal logging routes
 const deleteMealRoute = require('./routes/meal/delete');
 const editMealRoute = require('./routes/meal/edit');
@@ -35,6 +36,8 @@ app.use('/user', getAllUsersRoute);
 app.use('/user', getUserByIdRoute);
 app.use('/user', editUserRoute);
 app.use('/user', deleteUserByIDRoute);
+app.use('/user', verifyPassword);
+
 app.use('/user', deleteMealRoute)
 app.use('/user', editMealRoute)
 app.use('/user', getAllMealRoute)
