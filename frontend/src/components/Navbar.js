@@ -17,6 +17,7 @@ const Navbar = ({ showLoginModal, showRegisterModal }) => {
       <ul className="navbar-list">
         <li className="navbar-item"><Link to="/">Home</Link></li>
         {isLoggedIn && <li className="navbar-item"><Link to="/profile">Profile</Link></li>}
+        {isLoggedIn && <li className="navbar-item"><Link to="/mealLog">Meal Log</Link></li>}
         <li className="navbar-item"><Link to="/about">About</Link></li>
         {!isLoggedIn && <li className="navbar-item"><button className="navbar-btn" onClick={showLoginModal}>Login</button></li>}
         {!isLoggedIn && <li className="navbar-item"><button className="navbar-btn" onClick={showRegisterModal}>Register</button></li>}

@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import HomePage from './components/pages/HomePage';
 import ProfilePage from './components/pages/ProfilePage';
 import AboutPage from './components/pages/AboutPage';
+import MealLogPage from './components/pages/MealLogPage';
 
 import LoginModal from './components/modals/LoginModal';
 import RegisterModal from './components/modals/RegisterModal';
@@ -26,6 +27,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/mealLog" element={<MealLogPage />} />
         </Routes>
         <LoginModal show={isLoginModalVisible} onHide={hideLoginModal} />
         <RegisterModal show={isRegisterModalVisible} onHide={hideRegisterModal} />
