@@ -13,7 +13,7 @@ function HomePage() {
     try {
       // Send the prompt to the backend server
       const res = await axios.post('http://localhost:8081/api/query', { prompt });
-      setResponse(res.data.choices[0].text);
+      setResponse(JSON.stringify(res.data, null, 2)); // Ensure the response is correctly processed and formatted as JSON
     } catch (error) {
       console.error('Error querying LM:', error);
       setResponse('Failed to get a response from the server.');
@@ -60,9 +60,9 @@ function HomePage() {
       {response && (
         <div style={{ marginTop: '20px' }}>
           <h2>Response:</h2>
-          <p style={{ whiteSpace: 'pre-wrap', backgroundColor: '#f9f9f9', padding: '10px', borderRadius: '5px' }}>
+          <pre style={{ whiteSpace: 'pre-wrap', backgroundColor: '#f9f9f9', padding: '10px', borderRadius: '5px' }}>
             {response}
-          </p>
+          </pre>
         </div>
       )}
     </div>
