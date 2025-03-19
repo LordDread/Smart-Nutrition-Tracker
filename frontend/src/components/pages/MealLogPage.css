@@ -47,6 +47,15 @@ button:hover {
   background-color: #ddd;
 }
 
+button.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button.disabled:hover {
+  background-color: #ccc;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -65,6 +74,16 @@ button:hover {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
+}
+
+.larger-modal {
+  width: 800px; /* Increase the width of the modal */
+  height: auto; /* Adjust height as needed */
+}
+
+textarea {
+  width: 100%; /* Make the textarea take the full width */
+  resize: none; /* Disable resizing */
 }
 
 .close-btn {
@@ -150,4 +169,10 @@ button:hover {
 /* Change the color of the months not selected to red */
 .react-calendar__month-view__days__day--neighboringMonth {
   color: red;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }

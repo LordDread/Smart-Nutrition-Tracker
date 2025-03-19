@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const mealSchema = require('./mealSchema');  // Import mealSchema
+const dayMealsSchema = require('./mealSchema'); // Import dayMealsSchema
 
-//user schema/model
+// User schema/model
 const newUserSchema = new mongoose.Schema(
   {
     username: {
@@ -19,15 +19,15 @@ const newUserSchema = new mongoose.Schema(
       required: true,
       type: String,
       minlength: 8,
-      trim: true
+      trim: true,
     },
     date: {
       type: Date,
       default: Date.now,
     },
-    mealLog: [mealSchema],
+    mealLog: [dayMealsSchema], // Array of dayMealsSchema
   },
   { collection: "users" }
 );
 
-module.exports = mongoose.model('users', newUserSchema)
+module.exports = mongoose.model('users', newUserSchema);

@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 // Define the schema for a single meal entry
-const mealSchema = new Schema({
+const mealEntrySchema = new Schema({
   mealName: {
     type: String,
     required: true,
   },
-  date: {
-    type: Date,
+  time: {
+    type: String,
     required: true,
   },
   calories: {
@@ -101,4 +101,13 @@ const mealSchema = new Schema({
   }
 }, { _id: true });
 
-module.exports = mealSchema;
+// Define the schema for a day's meals
+const dayMealsSchema = new Schema({
+  date: {
+    type: Date,
+    required: true, // Represents the day
+  },
+  meals: [mealEntrySchema] // Array of meals for the day
+}, { _id: true });
+
+module.exports = dayMealsSchema;
