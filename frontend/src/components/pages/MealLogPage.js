@@ -110,6 +110,31 @@ function MealLogPage() {
     }
   };
 
+  const handleDeleteMeal = async () => {
+    if (!editMealId) return;
+
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this meal? This action cannot be undone.'
+    );
+
+    if (!confirmDelete) return;
+
+    setIsSubmitting(true); // Set submitting state to true
+    try {
+      await axios.delete(
+        `http://localhost:8081/user/${userId}/meal/${editMealId}`
+      );
+
+      fetchMealLogs(); // Refresh the meal logs
+      setIsEditModalOpen(false); // Close the modal
+      clearEditFields(); // Clear the edit fields
+    } catch (error) {
+      console.error('Error deleting meal:', error);
+    } finally {
+      setIsSubmitting(false); // Set submitting state to false
+    }
+  };
+
   const clearEditFields = () => {
     setEditMealId(null);
     setNewMealName('');
@@ -220,54 +245,194 @@ function MealLogPage() {
         <div className="modal-overlay">
           <div className="modal-container">
             <h2>Edit Meal</h2>
-            <label>
-              Meal Name:
-              <input
-                type="text"
-                value={newMealName}
-                onChange={(e) => setNewMealName(e.target.value)}
-                placeholder="Enter meal name"
-                disabled={isSubmitting} // Disable input while submitting
-              />
-            </label>
-            <br />
-            <label>
-              Date:
-              <input
-                type="date"
-                value={editMealDate}
-                onChange={(e) => setEditMealDate(e.target.value)}
-                disabled={isSubmitting} // Disable input while submitting
-              />
-            </label>
-            <br />
-            <label>
-              Time:
-              <input
-                type="time"
-                value={newMealTime}
-                onChange={(e) => setNewMealTime(e.target.value)}
-                disabled={isSubmitting} // Disable input while submitting
-              />
-            </label>
-            <br />
-            <label>
-              Description:
-              <textarea
-                value={newMealDescription}
-                onChange={(e) => setNewMealDescription(e.target.value)}
-                placeholder="Enter meal description"
-                disabled={isSubmitting} // Disable input while submitting
-              />
-            </label>
-            <br />
-            {isSubmitting && <p className="submitting-text">Submitting...</p>} {/* Display "Submitting..." */}
-            <button onClick={handleEditSubmit} disabled={isSubmitting}>
-              Save Changes
-            </button>
-            <button onClick={closeEditModal} disabled={isSubmitting}>
-              Cancel
-            </button>
+            <div className="modal-content">
+              {/* Form Section */}
+              <div className="form-column">
+                <label>
+                  Select Meal:
+                  <select
+                    value={editMealId || ''}
+                    onChange={(e) => {
+                      const selectedMealId = e.target.value;
+                      const selectedMeal = mealData[date.toDateString()].find(
+                        (meal) => meal._id === selectedMealId
+                      );
+                      if (selectedMeal) {
+                        setEditMealId(selectedMeal._id); // Set the meal ID
+                        setNewMealName(selectedMeal.mealName); // Populate meal name
+                        setNewMealTime(selectedMeal.time); // Populate meal time
+                        setNewMealDescription(selectedMeal.description); // Populate meal description
+                        setEditMealDate(new Date(date).toISOString().slice(0, 10)); // Populate meal date
+                      }
+                    }}
+                    disabled={isSubmitting} // Disable dropdown while submitting
+                  >
+                    <option value="" disabled>
+                      Select a meal
+                    </option>
+                    {mealData[date.toDateString()] &&
+                      mealData[date.toDateString()].map((meal) => (
+                        <option key={meal._id} value={meal._id}>
+                          {meal.mealName} - {meal.time}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+                <br />
+                <label>
+                  Meal Name:
+                  <input
+                    type="text"
+                    value={newMealName}
+                    onChange={(e) => setNewMealName(e.target.value)}
+                    placeholder="Enter meal name"
+                    disabled={isSubmitting} // Disable input while submitting
+                  />
+                </label>
+                <br />
+                <label>
+                  Date:
+                  <input
+                    type="date"
+                    value={editMealDate}
+                    onChange={(e) => setEditMealDate(e.target.value)}
+                    disabled={isSubmitting} // Disable input while submitting
+                  />
+                </label>
+                <br />
+                <label>
+                  Time:
+                  <input
+                    type="time"
+                    value={newMealTime}
+                    onChange={(e) => setNewMealTime(e.target.value)}
+                    disabled={isSubmitting} // Disable input while submitting
+                  />
+                </label>
+                <br />
+                <label>
+                  Description:
+                  <textarea
+                    value={newMealDescription}
+                    onChange={(e) => setNewMealDescription(e.target.value)}
+                    placeholder="Enter meal description"
+                    disabled={isSubmitting} // Disable input while submitting
+                  />
+                </label>
+                <br />
+                {isSubmitting && <p className="submitting-text">Submitting...</p>} {/* Display "Submitting..." */}
+                <div className="button-container">
+                  <button onClick={handleEditSubmit} disabled={isSubmitting}>
+                    Save Changes
+                  </button>
+                  <button onClick={closeEditModal} disabled={isSubmitting}>
+                    Cancel
+                  </button>
+                </div>
+                <div className="delete-button-container">
+                  <button
+                    onClick={handleDeleteMeal}
+                    className="delete-button"
+                    disabled={isSubmitting}
+                  >
+                    Delete Meal
+                  </button>
+                </div>
+              </div>
+
+              {/* Nutritional Information Section */}
+              <div className="nutrition-column">
+                <h3>Nutritional Information</h3>
+                {editMealId && (
+                  <ul>
+                    <li>
+                      <span>Calories:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.calories || 0}</span>
+                    </li>
+                    <li>
+                      <span>Carbs:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.carbs || 0}g</span>
+                    </li>
+                    <li>
+                      <span>Protein:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.protein || 0}g</span>
+                    </li>
+                    <li>
+                      <span>Fat:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.fat || 0}g</span>
+                    </li>
+                    <li>
+                      <span>Fiber:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.fiber || 0}g</span>
+                    </li>
+                    <li>
+                      <span>Sugar:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.sugar || 0}g</span>
+                    </li>
+                    <li>
+                      <span>Sodium:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.sodium || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Cholesterol:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.cholesterol || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Vitamin A:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminA || 0}μg</span>
+                    </li>
+                    <li>
+                      <span>Vitamin B2:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminB2 || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Vitamin B6:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminB6 || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Vitamin B12:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminB12 || 0}μg</span>
+                    </li>
+                    <li>
+                      <span>Vitamin C:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminC || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Vitamin D:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminD || 0}μg</span>
+                    </li>
+                    <li>
+                      <span>Vitamin E:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminE || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Vitamin K:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminK || 0}μg</span>
+                    </li>
+                    <li>
+                      <span>Calcium:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.calcium || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Iron:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.iron || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Magnesium:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.magnesium || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Potassium:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.potassium || 0}mg</span>
+                    </li>
+                    <li>
+                      <span>Zinc:</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.zinc || 0}mg</span>
+                    </li>
+                  </ul>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
