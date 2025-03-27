@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './HomePage.css'; // Import the CSS file
 
 function HomePage() {
   const [prompt, setPrompt] = useState('');
@@ -23,7 +24,7 @@ function HomePage() {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div className="home-page">
       <h1>Home Page</h1>
       <p>Welcome to the home page!</p>
 

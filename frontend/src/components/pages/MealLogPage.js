@@ -3,6 +3,10 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // Import the calendar CSS
 import './MealLogPage.css'; // Import the custom CSS for MealLogPage
 import axios from 'axios';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Tooltip as ChartTooltip } from 'chart.js';
+
+ChartJS.register(ArcElement, Tooltip, ChartTooltip);
 
 function MealLogPage() {
   const [date, setDate] = useState(new Date());
@@ -16,11 +20,18 @@ function MealLogPage() {
   const [editMealId, setEditMealId] = useState(null); // Stores the ID of the meal being edited
   const [editMealDate, setEditMealDate] = useState(''); // Stores the date of the meal being edited
   const [isSubmitting, setIsSubmitting] = useState(false); // Tracks submission state
+  const [macronutrientData, setMacronutrientData] = useState({}); // Stores macronutrient totals for the 7-day period
+  const [micronutrientData, setMicronutrientData] = useState({}); // Stores micronutrient totals for the 7-day period
   const userId = localStorage.getItem('userId'); // Get userId from localStorage
 
   useEffect(() => {
     fetchMealLogs();
   }, []);
+
+  useEffect(() => {
+    calculateMacronutrients();
+    calculateMicronutrients();
+  }, [date, mealData]);
 
   const fetchMealLogs = async () => {
     const currentDate = new Date();
@@ -53,6 +64,147 @@ function MealLogPage() {
     } catch (error) {
       console.error('Error fetching meal logs:', error);
     }
+  };
+
+  const calculateMacronutrients = () => {
+    const startDate = new Date(date);
+    startDate.setDate(startDate.getDate() - 6); // 7 days inclusive
+    const endDate = new Date(date);
+
+    const totals = { calories: 0, carbs: 0, protein: 0, fat: 0 };
+
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      const dayString = new Date(d).toDateString();
+      const meals = mealData[dayString] || [];
+      meals.forEach((meal) => {
+        totals.calories += meal.calories || 0;
+        totals.carbs += meal.carbs || 0;
+        totals.protein += meal.protein || 0;
+        totals.fat += meal.fat || 0;
+      });
+    }
+
+    setMacronutrientData(totals);
+  };
+
+  const calculateMicronutrients = () => {
+    const startDate = new Date(date);
+    startDate.setDate(startDate.getDate() - 6); // 7 days inclusive
+    const endDate = new Date(date);
+
+    const totals = {
+      fiber: 0,
+      sugar: 0,
+      sodium: 0,
+      vitaminA: 0,
+      vitaminC: 0,
+      vitaminD: 0,
+      vitaminE: 0,
+      vitaminK: 0,
+      calcium: 0,
+      iron: 0,
+      magnesium: 0,
+      potassium: 0,
+      zinc: 0,
+      // Add other vitamins and minerals as needed
+    };
+
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      const dayString = new Date(d).toDateString();
+      const meals = mealData[dayString] || [];
+      meals.forEach((meal) => {
+        Object.keys(totals).forEach((key) => {
+          totals[key] += meal[key] || 0;
+        });
+      });
+    }
+
+    setMicronutrientData(totals);
+  };
+
+  const prepareMicronutrientChartData = () => {
+    const total = Object.values(micronutrientData).reduce((sum, value) => sum + value, 0);
+    const data = [];
+    const labels = [];
+    const otherContents = [];
+
+    Object.entries(micronutrientData).forEach(([key, value]) => {
+      if (value === 0) return; // Skip 0% values
+      const percentage = (value / total) * 100;
+      if (percentage < 2) {
+        otherContents.push(`${key}: ${value}`);
+      } else {
+        data.push(value);
+        labels.push(`${key}`);
+      }
+    });
+
+    if (otherContents.length > 0) {
+      data.push(otherContents.reduce((sum, value) => sum + parseFloat(value.split(': ')[1]), 0));
+      labels.push('Other');
+    }
+
+    return {
+      data,
+      labels,
+      otherContents,
+    };
+  };
+
+  const micronutrientChartData = prepareMicronutrientChartData();
+  const micronutrientPieChartData = {
+    labels: micronutrientChartData.labels,
+    datasets: [
+      {
+        data: micronutrientChartData.data,
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', 
+          '#8A2BE2', '#5F9EA0', '#7FFF00', '#DC143C', '#FFD700', '#ADFF2F',
+          '#FF4500', '#DA70D6', '#00CED1', '#1E90FF', '#32CD32', '#FF1493'
+        ], // Ensure all colors are distinct
+        hoverBackgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', 
+          '#8A2BE2', '#5F9EA0', '#7FFF00', '#DC143C', '#FFD700', '#ADFF2F',
+          '#FF4500', '#DA70D6', '#00CED1', '#1E90FF', '#32CD32', '#FF1493'
+        ], // Ensure hover colors are also distinct
+      },
+    ],
+  };
+
+  const micronutrientTooltip = {
+    callbacks: {
+      label: function (tooltipItem) {
+        const label = tooltipItem.label;
+        const value = parseFloat(tooltipItem.raw).toFixed(2); // Cap value to 2 decimal places
+        let unit = '';
+
+        // Determine the unit based on the label
+        if (label.includes('Sodium') || label.includes('Potassium') || label.includes('Calcium') || label.includes('Magnesium') || label.includes('Iron') || label.includes('Zinc')) {
+          unit = 'mg';
+        } else if (label.includes('Vitamin A') || label.includes('Vitamin D') || label.includes('Vitamin K')) {
+          unit = 'µg';
+        } else if (label.includes('Fiber') || label.includes('Sugar') || label.includes('Protein') || label.includes('Carbs') || label.includes('Fat')) {
+          unit = 'g';
+        }
+
+        if (label === 'Other') {
+          return micronutrientChartData.otherContents.map((content) => {
+            const [key, val] = content.split(': ');
+            const cappedValue = parseFloat(val).toFixed(2); // Cap value to 2 decimal places
+            let otherUnit = '';
+            if (key.includes('Sodium') || key.includes('Potassium') || key.includes('Calcium') || key.includes('Magnesium') || key.includes('Iron') || key.includes('Zinc')) {
+              otherUnit = 'mg';
+            } else if (key.includes('Vitamin A') || key.includes('Vitamin D') || key.includes('Vitamin K')) {
+              otherUnit = 'µg';
+            } else if (key.includes('Fiber') || key.includes('Sugar') || key.includes('Protein') || key.includes('Carbs') || key.includes('Fat')) {
+              otherUnit = 'g';
+            }
+            return `${key}: ${cappedValue} ${otherUnit}`;
+          });
+        }
+        return `${label}: ${value} ${unit}`;
+      },
+    },
   };
 
   const handleAddMeal = async () => {
@@ -164,36 +316,74 @@ function MealLogPage() {
     return null;
   };
 
+  const pieChartData = {
+    labels: ['Calories', 'Carbs', 'Protein', 'Fat'],
+    datasets: [
+      {
+        data: [macronutrientData.calories, macronutrientData.carbs, macronutrientData.protein, macronutrientData.fat],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+      },
+    ],
+  };
+
+  const macronutrientTooltip = {
+    callbacks: {
+      label: function (tooltipItem) {
+        const label = tooltipItem.label;
+        const value = parseFloat(tooltipItem.raw).toFixed(2); // Cap value to 2 decimal places
+        let unit = '';
+
+        // Determine the unit based on the label
+        if (label === 'Calories') {
+          unit = 'kcal';
+        } else {
+          unit = 'g';
+        }
+
+        return `${label}: ${value} ${unit}`;
+      },
+    },
+  };
+
   return (
     <div className="meal-log-page">
       <h1>Meal Log</h1>
-      <div className="calendar-container">
-        <Calendar onChange={setDate} value={date} tileContent={tileContent} />
+      <div className="content-container">
+        <div className="calendar-container">
+          <Calendar onChange={setDate} value={date} tileContent={tileContent} />
+          {/* Moved buttons below the calendar */}
+          <div className="buttons-container">
+            <button onClick={openAddModal} className="add-meal-button">
+              Add Meal
+            </button>
+            <button
+              onClick={() => {
+                const mealsForDate = mealData[date.toDateString()];
+                if (mealsForDate && mealsForDate.length > 0) {
+                  handleEditMeal(mealsForDate.slice(-1)[0], date); // Pass the last meal and the date
+                }
+              }}
+              className={`edit-meal-button ${
+                !mealData[date.toDateString()] || mealData[date.toDateString()].length === 0
+                  ? 'disabled-button'
+                  : ''
+              }`}
+              disabled={
+                !mealData[date.toDateString()] || mealData[date.toDateString()].length === 0
+              }
+            >
+              Edit Meal
+            </button>
+          </div>
+        </div>
+        <div className="chart-container">
+          <h3>Macronutrients (Last 7 Days)</h3>
+          <Pie data={pieChartData} options={{ plugins: { tooltip: macronutrientTooltip } }} />
+          <h3>Micronutrients (Last 7 Days)</h3>
+          <Pie data={micronutrientPieChartData} options={{ plugins: { tooltip: micronutrientTooltip } }} />
+        </div>
       </div>
-      <div className="buttons-container">
-        <button onClick={openAddModal} className="add-meal-button">
-          Add Meal
-        </button>
-        <button
-          onClick={() => {
-            const mealsForDate = mealData[date.toDateString()];
-            if (mealsForDate && mealsForDate.length > 0) {
-              handleEditMeal(mealsForDate.slice(-1)[0], date); // Pass the last meal and the date
-            }
-          }}
-          className={`edit-meal-button ${
-            !mealData[date.toDateString()] || mealData[date.toDateString()].length === 0
-              ? 'disabled-button'
-              : ''
-          }`}
-          disabled={
-            !mealData[date.toDateString()] || mealData[date.toDateString()].length === 0
-          }
-        >
-          Edit Meal
-        </button>
-      </div>
-      <p>Selected date: {date.toDateString()}</p>
 
       {isAddModalOpen && (
         <div className="modal-overlay">
@@ -245,7 +435,7 @@ function MealLogPage() {
         <div className="modal-overlay">
           <div className="modal-container">
             <h2>Edit Meal</h2>
-            <div className="modal-content">
+            <div className="edit-modal-content">
               {/* Form Section */}
               <div className="form-column">
                 <label>
@@ -374,24 +564,8 @@ function MealLogPage() {
                       <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.sodium || 0}mg</span>
                     </li>
                     <li>
-                      <span>Cholesterol:</span>
-                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.cholesterol || 0}mg</span>
-                    </li>
-                    <li>
                       <span>Vitamin A:</span>
-                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminA || 0}μg</span>
-                    </li>
-                    <li>
-                      <span>Vitamin B2:</span>
-                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminB2 || 0}mg</span>
-                    </li>
-                    <li>
-                      <span>Vitamin B6:</span>
-                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminB6 || 0}mg</span>
-                    </li>
-                    <li>
-                      <span>Vitamin B12:</span>
-                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminB12 || 0}μg</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminA || 0}µg</span>
                     </li>
                     <li>
                       <span>Vitamin C:</span>
@@ -399,7 +573,7 @@ function MealLogPage() {
                     </li>
                     <li>
                       <span>Vitamin D:</span>
-                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminD || 0}μg</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminD || 0}µg</span>
                     </li>
                     <li>
                       <span>Vitamin E:</span>
@@ -407,7 +581,7 @@ function MealLogPage() {
                     </li>
                     <li>
                       <span>Vitamin K:</span>
-                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminK || 0}μg</span>
+                      <span>{mealData[date.toDateString()].find((meal) => meal._id === editMealId)?.vitaminK || 0}µg</span>
                     </li>
                     <li>
                       <span>Calcium:</span>

@@ -5,14 +5,19 @@
   justify-content: center;
   min-height: 100vh;
   background-color: #f9f9f9;
-  padding: 20px;
+  padding: 20px;  
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 20px;  
+  margin-top: -75px; /* Adjusted to move the title 75px closer to the navbar */
 }
 
 .calendar-container {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  justify-content: flex-start; /* Align items at the top initially */
+  align-items: center; /* Center items horizontally */
   background-color: white;
   padding: 0; /* Remove padding to make the border go to the edge */
   border-radius: 8px;
@@ -20,8 +25,7 @@ h1 {
   position: relative;
   width: 100%;
   max-width: 800px; /* Adjust the max-width as needed */
-  display: flex;
-  justify-content: center;
+  height: 100%;
 }
 
 p {
@@ -31,9 +35,9 @@ p {
 }
 
 .buttons-container {
+  margin-top: 10px; /* Reduced from auto to 10px to move buttons closer to the calendar */
   display: flex;
   gap: 10px;
-  margin-top: 20px;
 }
 
 button {
@@ -56,32 +60,6 @@ button.disabled:hover {
   background-color: #ccc;
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-}
-
-.modal-container {
-  max-width: 900px; /* Increased width to accommodate wider nutritional information */
-  width: 90%;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  height: auto; /* Allow the modal to grow dynamically */
-  overflow: visible; /* Ensure content isn't cut off */
-}
-
 .modal-container h2 {
   text-align: center; /* Center-align the text */
   font-size: 24px; /* Adjust font size if needed */
@@ -93,7 +71,8 @@ button.disabled:hover {
   display: flex;
   justify-content: space-between;
   gap: 20px; /* Add space between the form and nutritional information */
-  align-items: stretch; /* Ensure both sections stretch to the same height */
+  align-items: flex-start; /* Align items to the top */
+  flex-direction: row; /* Ensure the nutrition facts are to the right of the form */
 }
 
 textarea {
@@ -113,6 +92,7 @@ textarea {
 .react-calendar {
   width: 100%;
   max-width: 100%;
+  min-width: 800px;
   background: #4CAF50;
   border: 2px solid #4CAF50; /* Green border */
   border-radius: 8px;
@@ -141,6 +121,9 @@ textarea {
   color: black; /* Change the text color of the day numbers to black */
   position: relative;  
   box-sizing: border-box;
+  display: flex; /* Ensure content alignment */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
 }
 
 .react-calendar__tile p {
@@ -148,6 +131,7 @@ textarea {
   padding: 5px;
   font-size: 14px;
   text-align: center;
+  min-height: 20px; /* Ensure consistent height for content, even when empty */
 }
 
 .react-calendar__tile abbr {
@@ -185,11 +169,7 @@ textarea {
   color: red;
 }
 
-.navigation-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
+
 
 .modal-content input,
 .modal-content textarea {
@@ -252,11 +232,6 @@ textarea {
   cursor: not-allowed; /* Show "not-allowed" cursor */
 }
 
-.form-column {
-  flex: 2; /* Make the form column wider */
-  width: 100%; /* Ensure the form takes up the full width of the modal */
-}
-
 .form-column label {
   display: block;
   margin-bottom: 10px;
@@ -274,14 +249,14 @@ textarea {
 }
 
 .nutrition-column {
-  flex: 2; /* Increase the flex value to make the column wider */
+  flex: 1; /* Adjust width of the nutrition information */
   background-color: #f9f9f9;
-  padding: 15px; /* Add more padding for better readability */
-  border-radius: 5px;
+  padding: 15px; /* Add more padding for better readability */  
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Align content to the top */
+  border-radius: 5px;
 }
 
 .nutrition-column h3 {
@@ -341,4 +316,36 @@ textarea {
 .delete-button:disabled {
   background-color: #f5a5a5; /* Lighter red for disabled state */
   cursor: not-allowed;
+}
+
+.content-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chart-container {
+  width: 40%;
+  padding: 20px;
+}
+
+.edit-modal-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Add space between the form and nutritional information */
+  align-items: flex-start; /* Align items to the top */
+}
+
+.form-column {
+  flex: 2; /* Adjust width of the form */
+}
+
+.nutrition-column {
+  flex: 1; /* Adjust width of the nutrition information */
+  background-color: #f9f9f9;
+  padding: 15px; /* Add more padding for better readability */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content to the top */
+  border-radius: 5px;
 }

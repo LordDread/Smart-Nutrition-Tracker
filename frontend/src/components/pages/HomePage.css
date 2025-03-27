@@ -1,0 +1,9 @@
+.home-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  margin-top: 60px; /* Add spacing to ensure the navbar is above the title */
+}
+
+.home-page h1 {
+  margin-bottom: 20px;
+}
