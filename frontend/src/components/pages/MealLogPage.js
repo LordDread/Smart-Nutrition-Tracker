@@ -91,12 +91,17 @@ function MealLogPage() {
     const startDate = new Date(date);
     startDate.setDate(startDate.getDate() - 6); // 7 days inclusive
     const endDate = new Date(date);
-
+  
+    // Initialize totals with schema field names
     const totals = {
       fiber: 0,
       sugar: 0,
       sodium: 0,
+      cholesterol: 0,
       vitaminA: 0,
+      vitaminB2: 0,
+      vitaminB6: 0,
+      vitaminB12: 0,
       vitaminC: 0,
       vitaminD: 0,
       vitaminE: 0,
@@ -106,20 +111,20 @@ function MealLogPage() {
       magnesium: 0,
       potassium: 0,
       zinc: 0,
-      // Add other vitamins and minerals as needed
     };
-
+  
+    // Iterate through the 7-day period
     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
       const dayString = new Date(d).toDateString();
       const meals = mealData[dayString] || [];
       meals.forEach((meal) => {
         Object.keys(totals).forEach((key) => {
-          totals[key] += meal[key] || 0;
+          totals[key] += meal[key] || 0; // Accumulate values for each micronutrient
         });
       });
     }
-
-    setMicronutrientData(totals);
+  
+    setMicronutrientData(totals); // Update state with calculated totals
   };
 
   const prepareMicronutrientChartData = () => {
@@ -127,23 +132,45 @@ function MealLogPage() {
     const data = [];
     const labels = [];
     const otherContents = [];
-
+  
+    // Map internal keys to display labels
+    const labelMapping = {
+      fiber: 'Fiber',
+      sugar: 'Sugar',
+      sodium: 'Sodium',
+      cholesterol: 'Cholesterol',
+      vitaminA: 'Vitamin A',
+      vitaminB2: 'Vitamin B2',
+      vitaminB6: 'Vitamin B6',
+      vitaminB12: 'Vitamin B12',
+      vitaminC: 'Vitamin C',
+      vitaminD: 'Vitamin D',
+      vitaminE: 'Vitamin E',
+      vitaminK: 'Vitamin K',
+      calcium: 'Calcium',
+      iron: 'Iron',
+      magnesium: 'Magnesium',
+      potassium: 'Potassium',
+      zinc: 'Zinc',
+    };
+  
     Object.entries(micronutrientData).forEach(([key, value]) => {
       if (value === 0) return; // Skip 0% values
       const percentage = (value / total) * 100;
       if (percentage < 2) {
-        otherContents.push(`${key}: ${value}`);
+        // Push title-cased labels into the "Other" category
+        otherContents.push(`${labelMapping[key] || key}: ${value}`);
       } else {
         data.push(value);
-        labels.push(`${key}`);
+        labels.push(labelMapping[key] || key); // Use the mapped label or fallback to the key
       }
     });
-
+  
     if (otherContents.length > 0) {
       data.push(otherContents.reduce((sum, value) => sum + parseFloat(value.split(': ')[1]), 0));
-      labels.push('Other');
+      labels.push('Other'); // Add "Other" as a category
     }
-
+  
     return {
       data,
       labels,
@@ -173,8 +200,8 @@ function MealLogPage() {
 
   const micronutrientTooltip = {
     callbacks: {
-      label: function (tooltipItem) {
-        const label = tooltipItem.label;
+      label: function (tooltipItem) {        
+        const label = tooltipItem.label;        
         const value = parseFloat(tooltipItem.raw).toFixed(2); // Cap value to 2 decimal places
         let unit = '';
 
