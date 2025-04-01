@@ -8,6 +8,14 @@ import { Chart as ChartJS, ArcElement, Tooltip, Tooltip as ChartTooltip } from '
 
 ChartJS.register(ArcElement, Tooltip, ChartTooltip);
 
+const formatTimeTo12Hour = (time) => {
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours, 10);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12-hour format
+  return `${formattedHour}:${minutes} ${period}`;
+};
+
 function MealLogPage() {
   const [date, setDate] = useState(new Date());
   const [calorieData, setCalorieData] = useState({}); // Stores total calories for each day
@@ -237,8 +245,11 @@ function MealLogPage() {
   const handleAddMeal = async () => {
     setIsSubmitting(true); // Set submitting state to true
     try {
+      // If the meal name is blank, assign a default name with 12-hour formatted time
+      const mealName = newMealName.trim() === '' ? `Meal @ ${formatTimeTo12Hour(newMealTime)}` : newMealName;
+
       const newMeal = {
-        mealName: newMealName,
+        mealName: mealName,
         date: date.toISOString().slice(0, 10), // Format date as YYYY-MM-DD
         time: newMealTime,
         description: newMealDescription,
@@ -270,8 +281,11 @@ function MealLogPage() {
   const handleEditSubmit = async () => {
     setIsSubmitting(true); // Set submitting state to true
     try {
+      // If the meal name is blank, assign a default name with 12-hour formatted time
+      const mealName = newMealName.trim() === '' ? `Meal @ ${formatTimeTo12Hour(newMealTime)}` : newMealName;
+
       const updatedMeal = {
-        mealName: newMealName,
+        mealName: mealName,
         date: editMealDate, // Send the date from the "folder"
         time: newMealTime,
         description: newMealDescription,
@@ -378,6 +392,10 @@ function MealLogPage() {
       <h1>Meal Log</h1>
       <div className="content-container">
         <div className="calendar-container">
+          {/* Add instructional text above the calendar */}
+          <p className="calendar-instructions">
+            To add a meal, select a day and click Add Meal.
+          </p>
           <Calendar onChange={setDate} value={date} tileContent={tileContent} />
           {/* Moved buttons below the calendar */}
           <div className="buttons-container">
@@ -442,7 +460,8 @@ function MealLogPage() {
               <textarea
                 value={newMealDescription}
                 onChange={(e) => setNewMealDescription(e.target.value)}
-                placeholder="Enter meal description"
+                placeholder="Enter a description of the meal, for example: I ate a fried egg and 2 breakfast sausages."
+                rows={4} // Increase the rows to make the box one line longer
                 disabled={isSubmitting} // Disable input while submitting
               />
             </label>
@@ -490,7 +509,7 @@ function MealLogPage() {
                     {mealData[date.toDateString()] &&
                       mealData[date.toDateString()].map((meal) => (
                         <option key={meal._id} value={meal._id}>
-                          {meal.mealName} - {meal.time}
+                          {meal.mealName} - {formatTimeTo12Hour(meal.time)}
                         </option>
                       ))}
                   </select>
@@ -532,6 +551,7 @@ function MealLogPage() {
                   <textarea
                     value={newMealDescription}
                     onChange={(e) => setNewMealDescription(e.target.value)}
+                    rows={4}
                     placeholder="Enter meal description"
                     disabled={isSubmitting} // Disable input while submitting
                   />

@@ -349,3 +349,10 @@ textarea {
   justify-content: flex-start; /* Align content to the top */
   border-radius: 5px;
 }
+
+.calendar-instructions {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+  text-align: center;
+}
