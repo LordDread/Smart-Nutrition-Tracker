@@ -30,6 +30,7 @@ function MealLogPage() {
   const [isSubmitting, setIsSubmitting] = useState(false); // Tracks submission state
   const [macronutrientData, setMacronutrientData] = useState({}); // Stores macronutrient totals for the 7-day period
   const [micronutrientData, setMicronutrientData] = useState({}); // Stores micronutrient totals for the 7-day period
+  const [descriptionError, setDescriptionError] = useState(''); // Tracks description error
   const userId = localStorage.getItem('userId'); // Get userId from localStorage
 
   useEffect(() => {
@@ -243,9 +244,13 @@ function MealLogPage() {
   };
 
   const handleAddMeal = async () => {
+    if (newMealDescription.trim() === '') {
+      setDescriptionError('Description cannot be blank.');
+      return;
+    }
+    setDescriptionError(''); // Clear any previous error
     setIsSubmitting(true); // Set submitting state to true
     try {
-      // If the meal name is blank, assign a default name with 12-hour formatted time
       const mealName = newMealName.trim() === '' ? `Meal @ ${formatTimeTo12Hour(newMealTime)}` : newMealName;
 
       const newMeal = {
@@ -279,9 +284,13 @@ function MealLogPage() {
   };
 
   const handleEditSubmit = async () => {
+    if (newMealDescription.trim() === '') {
+      setDescriptionError('Description cannot be blank.');
+      return;
+    }
+    setDescriptionError(''); // Clear any previous error
     setIsSubmitting(true); // Set submitting state to true
     try {
-      // If the meal name is blank, assign a default name with 12-hour formatted time
       const mealName = newMealName.trim() === '' ? `Meal @ ${formatTimeTo12Hour(newMealTime)}` : newMealName;
 
       const updatedMeal = {
@@ -342,8 +351,17 @@ function MealLogPage() {
     setIsAddModalOpen(true);
   };
 
+  const closeAddModal = () => {
+    setNewMealName('');
+    setNewMealTime('');
+    setNewMealDescription('');
+    setDescriptionError(''); // Clear the error message
+    setIsAddModalOpen(false);
+  };
+
   const closeEditModal = () => {
     clearEditFields(); // Clear the edit fields
+    setDescriptionError(''); // Clear the error message
     setIsEditModalOpen(false);
   };
 
@@ -461,16 +479,17 @@ function MealLogPage() {
                 value={newMealDescription}
                 onChange={(e) => setNewMealDescription(e.target.value)}
                 placeholder="Enter a description of the meal, for example: I ate a fried egg and 2 breakfast sausages."
-                rows={4} // Increase the rows to make the box one line longer
+                rows={4}
                 disabled={isSubmitting} // Disable input while submitting
               />
             </label>
             <br />
+            {descriptionError && <p className="error-text">{descriptionError}</p>} {/* Display description error */}
             {isSubmitting && <p className="submitting-text">Submitting...</p>} {/* Display "Submitting..." */}
             <button onClick={handleAddMeal} disabled={isSubmitting}>
               Submit
             </button>
-            <button onClick={() => setIsAddModalOpen(false)} disabled={isSubmitting}>
+            <button onClick={closeAddModal} disabled={isSubmitting}>
               Cancel
             </button>
           </div>
@@ -557,24 +576,14 @@ function MealLogPage() {
                   />
                 </label>
                 <br />
+                {descriptionError && <p className="error-text">{descriptionError}</p>} {/* Display description error */}
                 {isSubmitting && <p className="submitting-text">Submitting...</p>} {/* Display "Submitting..." */}
-                <div className="button-container">
-                  <button onClick={handleEditSubmit} disabled={isSubmitting}>
-                    Save Changes
-                  </button>
-                  <button onClick={closeEditModal} disabled={isSubmitting}>
-                    Cancel
-                  </button>
-                </div>
-                <div className="delete-button-container">
-                  <button
-                    onClick={handleDeleteMeal}
-                    className="delete-button"
-                    disabled={isSubmitting}
-                  >
-                    Delete Meal
-                  </button>
-                </div>
+                <button onClick={handleEditSubmit} disabled={isSubmitting}>
+                  Save Changes
+                </button>
+                <button onClick={closeEditModal} disabled={isSubmitting}>
+                  Cancel
+                </button>
               </div>
 
               {/* Nutritional Information Section */}
