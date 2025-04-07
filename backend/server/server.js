@@ -3,24 +3,24 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const dbConnection = require('./server/config/db.config');
-const apiRoute = require('./server/routes/api'); // Import the new API route
+const dbConnection = require('./config/db.config');
+const apiRoute = require('./routes/api'); // Import the new API route
 
 // User routes
-const loginRoute = require('./server/routes/user/login');
-const registerRoute = require('./server/routes/user/signup');
-const getAllUsersRoute = require('./server/routes/user/getAll');
-const getUserByIdRoute = require('./server/routes/user/getById');
-const editUserRoute = require('./server/routes/user/edit');
-const deleteUserByIDRoute = require('./server/routes/user/deleteByID');
-const verifyPassword = require('./server/routes/user/verifyPassword');
+const loginRoute = require('./routes/user/login');
+const registerRoute = require('./routes/user/signup');
+const getAllUsersRoute = require('./routes/user/getAll');
+const getUserByIdRoute = require('./routes/user/getById');
+const editUserRoute = require('./routes/user/edit');
+const deleteUserByIDRoute = require('./routes/user/deleteByID');
+const verifyPassword = require('./routes/user/verifyPassword');
 
 // Meal logging routes
-const deleteMealRoute = require('./server/routes/meal/delete');
-const editMealRoute = require('./server/routes/meal/edit');
-const getAllMealRoute = require('./server/routes/meal/getAllById');
-const getMealRoute = require('./server/routes/meal/getById');
-const logMealRoute = require('./server/routes/meal/logMeal');
+const deleteMealRoute = require('./routes/meal/delete');
+const editMealRoute = require('./routes/meal/edit');
+const getAllMealRoute = require('./routes/meal/getAllById');
+const getMealRoute = require('./routes/meal/getById');
+const logMealRoute = require('./routes/meal/logMeal');
 
 // Load environment variables
 require('dotenv').config();
