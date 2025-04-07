@@ -8,7 +8,6 @@ const apiRoute = require('./routes/api'); // Import the new API route
 
 // User routes
 const loginRoute = require('./routes/user/login');
-console.log("Login route loaded");
 const registerRoute = require('./routes/user/signup');
 const getAllUsersRoute = require('./routes/user/getAll');
 const getUserByIdRoute = require('./routes/user/getById');
