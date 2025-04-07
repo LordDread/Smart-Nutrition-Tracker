@@ -29,7 +29,7 @@ router.post('/signup', async (req, res) => {
         email: email,
         password: hashPassword,
     });
-
+    
    
     try {
         const saveNewUser = await createUser.save();
