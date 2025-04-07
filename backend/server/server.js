@@ -24,7 +24,7 @@ const logMealRoute = require('./routes/meal/logMeal');
 
 // Load environment variables
 require('dotenv').config();
-const SERVER_PORT = 8081;
+const SERVER_PORT = process.env.PORT || 8081;
 const API_KEY = process.env.API_KEY; // Ensure you have this in your .env file
 
 app.use(bodyParser.json({ limit: '50mb' }));
