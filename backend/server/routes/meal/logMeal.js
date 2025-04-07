@@ -1,3 +1,4 @@
+require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const axios = require('axios'); // Import axios to make API requests
 const User = require('../../models/userModel'); // Import the User model
@@ -15,7 +16,7 @@ router.post('/:userId/meal', async (req, res) => {
 
   try {
     // Step 1: Send the description to the external API for processing
-    const apiResponse = await axios.post('http://localhost:8081/api/query', { prompt: description });
+    const apiResponse = await axios.post(process.env.API_QUERY_URI, { prompt: description });
 
     // Step 2: Extract the processed data from the API response
     const processedData = apiResponse.data; // Assuming the API returns a JSON object
