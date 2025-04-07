@@ -16,5 +16,9 @@
     "request": "^2.88.2",
     "transformers": "^3.1.0",
     "zod": "^3.24.1"
-  }
+  },
+  "scripts": {
+  "start": "node server.js"
+}
+
 }
