@@ -51,7 +51,7 @@ function MealLogPage() {
       const startDate = firstDayOfPreviousMonth.toISOString();
       const endDate = lastDayOfCurrentMonth.toISOString();
 
-      const url = `http://localhost:8081/user/${userId}/meals?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
+      const url = `${REACT_APP_BACKEND_SERVER_URI}/user/${userId}/meals?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
       const response = await axios.get(url);
 
       const mealLogs = response.data.mealLog;
@@ -260,7 +260,7 @@ function MealLogPage() {
         description: newMealDescription,
       };
 
-      await axios.post(`http://localhost:8081/user/${userId}/meal`, newMeal);
+      await axios.post(`${REACT_APP_BACKEND_SERVER_URI}/user/${userId}/meal`, newMeal);
 
       fetchMealLogs();
       setIsAddModalOpen(false);
@@ -300,7 +300,7 @@ function MealLogPage() {
         description: newMealDescription,
       };
 
-      await axios.put(`http://localhost:8081/user/${userId}/meal/${editMealId}`, updatedMeal);
+      await axios.put(`${REACT_APP_BACKEND_SERVER_URI}/user/${userId}/meal/${editMealId}`, updatedMeal);
 
       fetchMealLogs(); // Refresh the meal logs
       setIsEditModalOpen(false); // Close the modal
@@ -324,7 +324,7 @@ function MealLogPage() {
     setIsSubmitting(true); // Set submitting state to true
     try {
       await axios.delete(
-        `http://localhost:8081/user/${userId}/meal/${editMealId}`
+        `${REACT_APP_BACKEND_SERVER_URI}/user/${userId}/meal/${editMealId}`
       );
 
       fetchMealLogs(); // Refresh the meal logs
