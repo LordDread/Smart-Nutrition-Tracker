@@ -71,7 +71,7 @@ router.put('/:userId/meal/:mealId', async (req, res) => {
       };
     } else {
       // If the description has changed, query the external API
-      const apiResponse = await axios.post('http://localhost:8081/api/query', { prompt: description });
+      const apiResponse = await axios.post(`http://localhost:${process.env.PORT || 8081}/api/query`, { prompt: description });
       processedData = apiResponse.data; // Assuming the API returns a JSON object
     }
 
