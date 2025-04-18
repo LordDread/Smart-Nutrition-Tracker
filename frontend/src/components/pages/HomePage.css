@@ -1,9 +1,17 @@
 .home-page {
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  margin-top: 60px; /* Add spacing to ensure the navbar is above the title */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100vh; /* Makes the container take the full viewport height */
 }
 
 .home-page h1 {
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* Adds spacing between the heading and the image */
+}
+
+.home-page img {
+  max-width: 100%; /* Ensures the image is responsive */
+  height: auto;
 }
