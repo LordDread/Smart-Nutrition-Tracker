@@ -122,7 +122,6 @@ router.put('/:userId/meal/:mealId', async (req, res) => {
       );
 
       if (!newDayEntry) {
-        // If the new date does not exist, create a new day entry
         newDayEntry = {
           date: normalizedDate,
           meals: [],
@@ -132,6 +131,13 @@ router.put('/:userId/meal/:mealId', async (req, res) => {
 
       // Add the meal to the new day's meals array
       newDayEntry.meals.push(updatedMeal);
+
+      // Ensure the original day entry is not removed if it still contains other meals
+      if (originalDayEntry.meals.length === 0) {
+        user.mealLog = user.mealLog.filter(
+          (entry) => entry.date.getTime() !== originalDate.getTime()
+        );
+      }
     }
 
     // Step 8: Save the updated user document

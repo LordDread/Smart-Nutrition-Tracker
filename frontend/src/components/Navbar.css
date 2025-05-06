@@ -1,54 +1,72 @@
 .navbar {
-    background-color: #333;
-    overflow: hidden;
-  }
-  
-  .navbar-list {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-  }
-  
-  .navbar-item {
-    padding: 14px 20px;
-  }
-  
-  .navbar-item a,
-  .navbar-item button {
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .navbar-item a:hover,
-  .navbar-item button:hover {
-    background-color: #ddd;
-    color: black;
-  }
-  
-  .navbar-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .navbar-btn:hover {
-    background-color: #45a049;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #000000;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar-list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.navbar-item {
+  margin: 0 10px;
+}
+
+.navbar-item a,
+.navbar-item button {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: large;
+  cursor: pointer;
+}
+
+.navbar-item a:hover,
+.navbar-item button:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.navbar-right {
+  margin-left: auto; /* Pushes the right section to the far right */
+  display: flex;
+  align-items: center;
+}
+
+.navbar-username {
+  margin-right: 10px;
+  font-size: large;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.navbar-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.navbar-btn:hover {
+  background-color: #0056b3;
+}
+
+.navbar-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
