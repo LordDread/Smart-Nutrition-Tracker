@@ -584,6 +584,13 @@ function MealLogPage() {
                 <button onClick={closeEditModal} disabled={isSubmitting}>
                   Cancel
                 </button>
+                <button
+                  onClick={handleDeleteMeal}
+                  className="delete-meal-button"
+                  disabled={isSubmitting}
+                >
+                  Delete
+                </button>
               </div>
 
               {/* Nutritional Information Section */}

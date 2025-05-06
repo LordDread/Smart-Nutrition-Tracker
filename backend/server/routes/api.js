@@ -18,7 +18,7 @@ router.post('/query', async (req, res) => {
 
   try {
     const response = await axios.post(`${process.env.API_QUERY_URI}/v1/chat/completions`, {
-      model: "deepseek-r1-distill-llama-8b",
+      model: process.env.MODEL,
       messages: [
         { role: "system", content: format_info },
         { role: "user", content: "In JSON: " + prompt }

@@ -362,3 +362,22 @@ textarea {
   font-size: 14px;
   margin-bottom: 10px;
 }
+
+.delete-meal-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.delete-meal-button:hover {
+  background-color: #ff1a1a;
+}
+
+.delete-meal-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
